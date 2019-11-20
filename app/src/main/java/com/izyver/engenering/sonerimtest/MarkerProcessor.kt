@@ -12,8 +12,7 @@ abstract class MarkerProcessor(
     protected val markerDiameter: Int
 ) {
     protected var points: MutableList<MarkerPoint> = mutableListOf()
-    fun generate(upLeft: LatLng, downRight: LatLng) {
-        var i = 0
+    open fun generate(upLeft: LatLng, downRight: LatLng) {
         points = MutableList(100) {
             val latLng = LatLng(
                 random(upLeft.latitude, downRight.latitude),

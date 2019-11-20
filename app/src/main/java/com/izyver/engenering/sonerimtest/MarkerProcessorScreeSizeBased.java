@@ -23,6 +23,12 @@ public class MarkerProcessorScreeSizeBased extends MarkerProcessor {
         super(screenSize, markerDiameter);
     }
 
+    @Override
+    public void generate(@NotNull LatLng upLeft, @NotNull LatLng downRight) {
+        super.generate(upLeft, downRight);
+        lastPoints = null;
+    }
+
     @NotNull
     @Override
     public List<MarkerPoint> getPointsForProjection(@NotNull Projection projection, float zoom) {

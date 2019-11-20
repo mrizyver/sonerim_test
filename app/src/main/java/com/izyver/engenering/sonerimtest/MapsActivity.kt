@@ -7,6 +7,7 @@ import android.util.Log
 import com.google.android.gms.maps.*
 
 import com.google.android.gms.maps.model.*
+import kotlinx.android.synthetic.main.activity_maps.*
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCameraChangeListener {
     private lateinit var markerProcessor: MarkerProcessor
@@ -19,7 +20,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
             this.javaClass.simpleName,
             "bearing = ${p0.bearing}, (latitude - ${p0.target.latitude}, longitude - ${p0.target.longitude}), tilt = ${p0.tilt}, zoom = ${p0.zoom}"
         )
-        if(lastZoom != p0.zoom){
+        if (lastZoom != p0.zoom) {
             updateMarkers(p0.zoom)
             lastZoom = p0.zoom
         }
@@ -30,15 +31,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         mMap.setOnCameraChangeListener(this)
+        generateNewMarkers()
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(LatLng(51.773911, 25.590464)))
+    }
+
+    private fun generateNewMarkers() {
         markerProcessor.generate(LatLng(51.773911, 25.590464), LatLng(47.057204, 37.210914))
         updateMarkers(mMap.cameraPosition.zoom)
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(LatLng(51.773911, 25.590464)))
     }
 
     private var markers: ArrayList<Marker> = arrayListOf()
 
     private fun updateMarkers(zoom: Float) {
-        val points: MutableList<MarkerPoint> = markerProcessor.getPointsForProjection(mMap.projection, zoom)
+        val points: MutableList<MarkerPoint> =
+            markerProcessor.getPointsForProjection(mMap.projection, zoom)
         markers.forEach { it.remove() }
         markers = ArrayList(points.size)
         for (point in points) {
@@ -48,11 +54,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
             markers.add(mMap.addMarker(markerOptions))
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
+
+        val mapFragment = SupportMapFragment.newInstance()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, mapFragment)
+            .commit()
         mapFragment.getMapAsync(this)
         markerDiameter = resources.getDimension(R.dimen.marker_diameter).toInt()
         val screenSize = Point()
@@ -61,6 +71,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
             screenSize,
             markerDiameter
         )
+        fab.setOnClickListener{
+            generateNewMarkers()
+        }
     }
 
     private fun bitmap(text: String): Bitmap {

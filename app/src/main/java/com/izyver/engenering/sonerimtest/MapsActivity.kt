@@ -88,8 +88,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
             mMarkerDiameterPx / 2f,
             paint
         )
-        paint.color = Color.BLACK
-        canvas.drawText(text, mMarkerDiameterPx / 3f, mMarkerDiameterPx / 1.3f, paint)
+        paint.color = Color.WHITE
+        paint.textAlign = Paint.Align.CENTER
+        val x = mMarkerDiameterPx / 2f
+        val y = (mMarkerDiameterPx / 2f) - ((paint.ascent() + paint.descent()) / 2)
+        canvas.drawText(text, x, y, paint)
         return bitmap
     }
 }

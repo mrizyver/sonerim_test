@@ -29,31 +29,6 @@ class MarkerProcessorConvertBased(screen: Point, markerDiameter: Int) :
         return result
     }
 
-    private fun getIntersections(
-        point: MarkerPoint,
-        points: List<MarkerPoint>,
-        markerRationDiameter: Double
-    ): MutableList<MarkerPoint> {
-        val intersections = mutableListOf<MarkerPoint>()
-
-        for (otherPoint in points) {
-            val length = length(point, otherPoint)
-            if (length > markerRationDiameter) {
-                continue
-            } else {
-                intersections.add(otherPoint)
-            }
-        }
-        intersections.size.dec()
-        return intersections
-    }
-
-    private fun isInProjection(point: MarkerPoint, projection: Projection): Boolean {
-        return point.latLng.longitude > projection.visibleRegion.farLeft.longitude
-                && point.latLng.longitude < projection.visibleRegion.farRight.longitude
-                && point.latLng.latitude < projection.visibleRegion.farLeft.latitude
-                && point.latLng.latitude > projection.visibleRegion.nearLeft.latitude
-    }
 
     private fun split(
         intersections: MutableList<MarkerPoint>,
@@ -84,12 +59,44 @@ class MarkerProcessorConvertBased(screen: Point, markerDiameter: Int) :
         )
     }
 
+    private fun getIntersections(
+        point: MarkerPoint,
+        points: List<MarkerPoint>,
+        markerRationDiameter: Double
+    ): MutableList<MarkerPoint> {
+        val intersections = mutableListOf<MarkerPoint>()
+
+        for (otherPoint in points) {
+            val length = length(point, otherPoint)
+            if (length > markerRationDiameter) {
+                continue
+            } else {
+                intersections.add(otherPoint)
+            }
+        }
+        intersections.size.dec()
+        return intersections
+    }
+
     private fun length(point1: MarkerPoint, point2: MarkerPoint): Double {
         val latLng1 = point1.latLng
         val latLng2 = point2.latLng
         if (latLng1 == latLng2) return Double.MAX_VALUE
         val first = latLng1.longitude - latLng2.longitude
-        val second = latLng1.latitude- latLng2.latitude
+        val second = latLng1.latitude - latLng2.latitude
         return sqrt(first.pow(2) + second.pow(2))
     }
+
+    private fun isInProjection(point: MarkerPoint, projection: Projection): Boolean {
+        return point.latLng.longitude > projection.visibleRegion.farLeft.longitude
+                && point.latLng.longitude < projection.visibleRegion.farRight.longitude
+                && point.latLng.latitude < projection.visibleRegion.farLeft.latitude
+                && point.latLng.latitude > projection.visibleRegion.nearLeft.latitude
+    }
+
+    private fun random(min: Double, max: Double): Double {
+        max - min
+        return (Math.random() * (max - min)) + min
+    }
+
 }

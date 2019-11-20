@@ -6,6 +6,7 @@ import com.google.android.gms.maps.model.LatLng
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
+import com.google.maps.android.clustering.ClusterItem
 
 data class MarkerPoint(val value: Int, val latLng: LatLng)
 

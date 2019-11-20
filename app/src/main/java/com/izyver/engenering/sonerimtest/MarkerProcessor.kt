@@ -14,12 +14,12 @@ abstract class MarkerProcessor(
     protected var points: MutableList<MarkerPoint> = mutableListOf()
     fun generate(upLeft: LatLng, downRight: LatLng) {
         var i = 0
-        points = MutableList(6) {
+        points = MutableList(100) {
             val latLng = LatLng(
                 random(upLeft.latitude, downRight.latitude),
                 random(upLeft.longitude, downRight.longitude)
             )
-            MarkerPoint(/*random(0.0, 10.0).toInt()*/i++, latLng)
+            MarkerPoint(random(0.0, 10.0).toInt(), latLng)
         }
     }
 

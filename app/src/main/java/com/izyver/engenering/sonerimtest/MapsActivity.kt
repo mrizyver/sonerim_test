@@ -57,7 +57,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
         markerDiameter = resources.getDimension(R.dimen.marker_diameter).toInt()
         val screenSize = Point()
         windowManager.defaultDisplay.getSize(screenSize)
-        markerProcessor = MarkerProcessorConvertBased(
+        markerProcessor = MarkerProcessorScreeSizeBased(
             screenSize,
             markerDiameter
         )

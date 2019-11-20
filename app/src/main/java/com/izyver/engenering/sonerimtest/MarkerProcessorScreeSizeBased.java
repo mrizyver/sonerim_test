@@ -46,7 +46,8 @@ public class MarkerProcessorScreeSizeBased extends MarkerProcessor {
         Point[] screePoints = new Point[points.size()];
         for (int i = 0; i < points.size(); i++) {
             screePoints[i] = projection.toScreenLocation(points.get(i).latLng);
-            screePoints[i].y = screePoints[i].y - markerDiameter / 2;
+            //by default the point points to bottom part of marker by y coordinate
+            screePoints[i].y = screePoints[i].y - markerDiameter / 2; //set point to point to center of marker
         }
 
         List<MarkerPoint> resultPoints = new ArrayList<>();
@@ -55,29 +56,38 @@ public class MarkerProcessorScreeSizeBased extends MarkerProcessor {
             for (int j = i; j < screePoints.length; j++) {
                 if (j != i && isIntersect(screePoints[i], screePoints[j])) {
                     intersects.add(points.get(j));
-                    screePoints[j] = null;
+                    screePoints[j] = null;//remove item to avoid duplicates points
                 }
             }
             if (intersects.isEmpty()) {
-                if (screePoints[i] == null) continue;
+                if (screePoints[i] == null) {
+                    //don't add duplicated item to result
+                    continue;
+                }
                 resultPoints.add(points.get(i));
             } else {
                 intersects.add(points.get(i));
-                float value = 0;
-                double latitude = 0;
-                double longitude = 0;
-                for (MarkerPoint intersect : intersects) {
-                    value += intersect.value;
-                    latitude += intersect.latLng.latitude;
-                    longitude += intersect.latLng.longitude;
-                }
-                LatLng latLng = new LatLng(latitude / intersects.size(), longitude / intersects.size());
-                resultPoints.add(new MarkerPoint(Math.round(value / intersects.size()), latLng));
+                MarkerPoint markerPoint = makeAveragePoint(intersects);
+                resultPoints.add(markerPoint);
             }
         }
 
         lastPoints = resultPoints;
         return resultPoints;
+    }
+
+    @NotNull
+    private MarkerPoint makeAveragePoint(List<MarkerPoint> intersects) {
+        float value = 0;
+        double latitude = 0;
+        double longitude = 0;
+        for (MarkerPoint intersect : intersects) {
+            value += intersect.value;
+            latitude += intersect.latLng.latitude;
+            longitude += intersect.latLng.longitude;
+        }
+        LatLng latLng = new LatLng(latitude / intersects.size(), longitude / intersects.size());
+        return new MarkerPoint(Math.round(value / intersects.size()), latLng);
     }
 
     private boolean isIntersect(Point point1, Point point2) {

@@ -29,7 +29,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
         mMap = googleMap
         mMap.setOnCameraChangeListener(this)
         generateNewMarkers()
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(LatLng(51.773911, 25.590464)))
+        val ukraine = LatLng(49.4, 31.0)
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ukraine, 5f))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

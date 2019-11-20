@@ -25,7 +25,6 @@ abstract class MarkerProcessor(
     abstract fun getPointsForProjection(projection: Projection, zoom: Float): MutableList<MarkerPoint>
 
     private fun random(min: Double, max: Double): Double {
-        max - min
         return (Math.random() * (max - min)) + min
     }
 }

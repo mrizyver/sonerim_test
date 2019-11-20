@@ -10,6 +10,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
+
 class ScreenPointCollection {
     private static final int NOT_MUST_TO_JUMP = -1;
 
@@ -17,7 +20,7 @@ class ScreenPointCollection {
     private Node[] indexOfX;
     private Node[] indexOfY;
 
-    private int size = 0;
+    private int size;
     private int position;
     private int mustToJump = NOT_MUST_TO_JUMP;
 
@@ -37,18 +40,19 @@ class ScreenPointCollection {
 
     public VPoint[] getAround(VPoint point, int distance, boolean remove) {
         Set<Integer> indexes = new HashSet<>();
+        indexes.addAll(indexSampling(indexOfX, point.x - distance, point.x + distance));
+        indexes.addAll(indexSampling(indexOfY, point.y - distance, point.y + distance));
 
-        List<Integer> xIndexes = indexSampling(indexOfX, point.x - distance, point.x + distance);
-        for (Integer xIndex : xIndexes) {
-            if (points[xIndex] != null && isInVerticalDiapason(point, distance, points[xIndex]))
-                indexes.add(xIndex);
+        List<Integer> toRemove = new LinkedList<>();
+        for (Integer index : indexes) {
+            if (points[index] == null
+                    || (point.y == points[index].y && point.x == points[index].x)
+                    || length(point, points[index]) > distance) {
+                toRemove.add(index);
+            }
         }
+        indexes.removeAll(toRemove);
 
-        List<Integer> yIndexes = indexSampling(indexOfY, point.y - distance, point.y + distance);
-        for (Integer yIndex : yIndexes) {
-            if (points[yIndex] != null && isInHorizontalDiapason(point, distance, points[yIndex]))
-                indexes.add(yIndex);
-        }
         VPoint[] result = new VPoint[indexes.size()];
         int i = 0;
         for (Integer index : indexes) {
@@ -148,6 +152,12 @@ class ScreenPointCollection {
         return result;
     }
 
+    protected int length(VPoint point1, VPoint point2) {
+        int first = point2.x - point1.x;
+        int second = point2.y - point1.y;
+        return (int) sqrt(pow(first, 2) + pow(second, 2));
+    }
+
     /**
      * @param srcPoint - point according that will calculate diapason
      * @param distance - diapason above and below src
@@ -158,18 +168,16 @@ class ScreenPointCollection {
      * it has the same meaning
      */
     private boolean isInVerticalDiapason(VPoint srcPoint, int distance, VPoint dstPoint) {
-        return dstPoint.y > srcPoint.y - distance
-                && dstPoint.y < srcPoint.y + distance
-                && dstPoint.x != srcPoint.x;
+        return dstPoint.y >= srcPoint.y - distance
+                && dstPoint.y <= srcPoint.y + distance;
     }
 
     /**
      * @see ScreenPointCollection#isInVerticalDiapason(VPoint, int, VPoint)
      */
     private boolean isInHorizontalDiapason(VPoint srcPoint, int distance, VPoint dstPoint) {
-        return dstPoint.x > srcPoint.x - distance
-                && dstPoint.x < srcPoint.x + distance
-                && dstPoint.y != srcPoint.y;
+        return dstPoint.x >= srcPoint.x - distance
+                && dstPoint.x <= srcPoint.x + distance;
     }
 
     class Node implements Comparable<Node> {

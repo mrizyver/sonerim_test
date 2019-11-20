@@ -86,7 +86,7 @@ public class ScreenPointCollectionTest {
             }
         }
         VPoint[] vPoints = collection.toArray();
-        assertEquals(vPoints.length, 6);
+        assertEquals(6, vPoints.length);
         assertTrue(contains(vPoints, points[6]));
         assertTrue(contains(vPoints, points[7]));
         assertTrue(contains(vPoints, new FakeVPoint(0, 12, 10)));

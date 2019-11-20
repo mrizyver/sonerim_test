@@ -21,26 +21,33 @@ public class ImprovedProcessorScreenSizeBased extends MarkerProcessorScreeSizeBa
         VPoint[] points = new VPoint[markerPoints.size()];
         for (int i = 0; i < markerPoints.size(); i++) {
             Point point = projection.toScreenLocation(markerPoints.get(i).latLng);
-            points[i] = new VPoint(markerPoints.get(i).value, point.x, point.y);
+            points[i] = new VPoint(markerPoints.get(i).value, point.x, point.y - markerDiameter / 2);
         }
+        points = removeIncreasing(points);
+        points = removeIncreasing(points);
+
+        List<MarkerPoint> result = new LinkedList<>();
+        for (VPoint dirtyPoint : points) {
+            dirtyPoint.y += markerDiameter / 2;
+            LatLng latLng = projection.fromScreenLocation(dirtyPoint);
+            result.add(new MarkerPoint(dirtyPoint.value, latLng));
+        }
+
+        return result;
+    }
+
+    private VPoint[] removeIncreasing(VPoint[] points) {
         ScreenPointCollection collection = new ScreenPointCollection(points);
         while (collection.hasNext()) {
             VPoint next = collection.next();
-            VPoint[] around = collection.getAround(next, 10, true);
+            VPoint[] around = collection.getAround(next, markerDiameter, true);
             if (around.length > 0) {
                 VPoint splitPoint = splitPoints(next, around);
                 collection.setInstead(splitPoint);
                 collection.moveBack();
             }
         }
-        List<MarkerPoint> result = new LinkedList<>();
-        VPoint[] vPoints = collection.toArray();
-        for (VPoint dirtyPoint : vPoints) {
-            LatLng latLng = projection.fromScreenLocation(dirtyPoint);
-            result.add(new MarkerPoint(dirtyPoint.value, latLng));
-        }
-
-        return result;
+        return collection.toArray();
     }
 
 

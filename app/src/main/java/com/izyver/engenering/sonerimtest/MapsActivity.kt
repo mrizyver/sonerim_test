@@ -1,10 +1,12 @@
 package com.izyver.engenering.sonerimtest
 
 import android.graphics.*
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.google.android.gms.maps.*
-
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.activity_maps.*
 
@@ -73,12 +75,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
     }
 
     private fun createMarkerBitmap(text: String): Bitmap {
-        val bitmap = Bitmap.createBitmap(mMarkerDiameterPx, mMarkerDiameterPx, Bitmap.Config.ARGB_8888)
+        val bitmap =
+            Bitmap.createBitmap(mMarkerDiameterPx, mMarkerDiameterPx, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val paint = Paint()
         paint.textSize = resources.getDimension(R.dimen.text_size)
         paint.color = Color.RED
-        canvas.drawCircle(mMarkerDiameterPx / 2f, mMarkerDiameterPx / 2f, mMarkerDiameterPx / 2f, paint)
+        canvas.drawCircle(
+            mMarkerDiameterPx / 2f,
+            mMarkerDiameterPx / 2f,
+            mMarkerDiameterPx / 2f,
+            paint
+        )
         paint.color = Color.BLACK
         canvas.drawText(text, mMarkerDiameterPx / 3f, mMarkerDiameterPx / 1.3f, paint)
         return bitmap

@@ -43,12 +43,13 @@ public class MarkerProcessorScreeSizeBased extends MarkerProcessor {
         }
         lastZoom = zoom;
 
-        Point[] screePoints = new Point[points.size()];
-        for (int i = 0; i < points.size(); i++) {
-            screePoints[i] = projection.toScreenLocation(points.get(i).latLng);
-            //by default the point points to bottom part of marker by y coordinate
-            screePoints[i].y = screePoints[i].y - markerDiameter / 2; //set point to point to center of marker
-        }
+        lastPoints = calculateMarkerPoints(projection, points);
+        return lastPoints;
+    }
+
+    @NotNull
+    protected List<MarkerPoint> calculateMarkerPoints(@NotNull Projection projection, List<MarkerPoint> points) {
+        Point[] screePoints = convertToPoints(projection, points);
 
         List<MarkerPoint> resultPoints = new ArrayList<>();
         for (int i = 0; i < screePoints.length; i++) {
@@ -71,13 +72,22 @@ public class MarkerProcessorScreeSizeBased extends MarkerProcessor {
                 resultPoints.add(markerPoint);
             }
         }
-
-        lastPoints = resultPoints;
         return resultPoints;
     }
 
     @NotNull
-    private MarkerPoint makeAveragePoint(List<MarkerPoint> intersects) {
+    protected Point[] convertToPoints(@NotNull Projection projection, List<MarkerPoint> points) {
+        Point[] screePoints = new Point[points.size()];
+        for (int i = 0; i < points.size(); i++) {
+            screePoints[i] = projection.toScreenLocation(points.get(i).latLng);
+            //by default the point points to bottom part of marker by y coordinate
+            screePoints[i].y = screePoints[i].y - markerDiameter / 2; //set point to point to center of marker
+        }
+        return screePoints;
+    }
+
+    @NotNull
+    protected MarkerPoint makeAveragePoint(List<MarkerPoint> intersects) {
         float value = 0;
         double latitude = 0;
         double longitude = 0;
@@ -90,13 +100,13 @@ public class MarkerProcessorScreeSizeBased extends MarkerProcessor {
         return new MarkerPoint(Math.round(value / intersects.size()), latLng);
     }
 
-    private boolean isIntersect(Point point1, Point point2) {
+    protected boolean isIntersect(Point point1, Point point2) {
         if (point1 == null || point2 == null) return false;
         int length = length(point1, point2);
         return length < markerDiameter;
     }
 
-    private int length(Point point1, Point point2) {
+    protected int length(Point point1, Point point2) {
         int first = point2.x - point1.x;
         int second = point2.y - point1.y;
         return (int) sqrt(pow(first, 2) + pow(second, 2));

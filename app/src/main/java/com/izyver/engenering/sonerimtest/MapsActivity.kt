@@ -32,7 +32,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
         val height = window.windowManager.defaultDisplay.height
         val width = window.windowManager.defaultDisplay.width
         val ukraine = LatLngBounds(LatLng(44.1, 22.1), LatLng(52.0, 40.5))
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(ukraine,width, height, 0))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(ukraine, width, height, 0))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,19 +62,26 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
         updateMarkers(mMap.cameraPosition.zoom)
     }
 
-    private var markers: ArrayList<Marker> = arrayListOf()
+    private var markers: HashMap<LatLng, Marker> = hashMapOf()
 
     private fun updateMarkers(zoom: Float) {
         val markerPoints: MutableList<MarkerPoint> =
             mMarkerProcessor.getPointsForProjection(mMap.projection, zoom)
-        markers.forEach { it.remove() }
-        markers = ArrayList(markerPoints.size)
+        val newMarkers = HashMap<LatLng, Marker>(markerPoints.size)
         for (point in markerPoints) {
+            val latLng = point.latLng
+            if (markers.containsKey(latLng)){
+                newMarkers[latLng] = markers.remove(latLng) ?: continue
+                continue
+            }
             val markerOptions = MarkerOptions()
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(createMarkerBitmap(point.value.toString())))
-            markerOptions.position(point.latLng)
-            markers.add(mMap.addMarker(markerOptions))
+            markerOptions.position(latLng)
+            val marker = mMap.addMarker(markerOptions)
+            newMarkers[latLng] = marker
         }
+        markers.forEach { it.value.remove() }
+        markers = newMarkers
     }
 
     private fun createMarkerBitmap(text: String): Bitmap {

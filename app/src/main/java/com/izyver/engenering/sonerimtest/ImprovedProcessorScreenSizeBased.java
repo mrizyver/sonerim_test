@@ -23,8 +23,7 @@ public class ImprovedProcessorScreenSizeBased extends MarkerProcessorScreeSizeBa
             Point point = projection.toScreenLocation(markerPoints.get(i).latLng);
             points[i] = new VPoint(markerPoints.get(i).value, point.x, point.y - markerDiameter / 2);
         }
-        points = removeIncreasing(points);
-        points = removeIncreasing(points);
+        points = removeIntersection(points);
 
         List<MarkerPoint> result = new LinkedList<>();
         for (VPoint dirtyPoint : points) {
@@ -36,7 +35,7 @@ public class ImprovedProcessorScreenSizeBased extends MarkerProcessorScreeSizeBa
         return result;
     }
 
-    private VPoint[] removeIncreasing(VPoint[] points) {
+    private VPoint[] removeIntersection(VPoint[] points) {
         ScreenPointCollection collection = new ScreenPointCollection(points);
         while (collection.hasNext()) {
             VPoint next = collection.next();

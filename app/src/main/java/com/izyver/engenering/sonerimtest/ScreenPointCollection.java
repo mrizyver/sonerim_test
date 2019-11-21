@@ -95,26 +95,10 @@ class ScreenPointCollection {
         if (position < 0) {
             return false;
         } else {
-            position++;
+            position--;
             return true;
         }
     }
-
-//    public void remove(VPoint... points) {
-//        for (Point point : points) {
-//            int indexY = UtilKt.binaryPlaceSearch(indexOfY, new Node(0, point.y), Node::compareTo);
-//            indexY = indexOfY[indexY].index;
-//
-//            int indexX = UtilKt.binaryPlaceSearch(indexOfX, new Node(0, point.x), Node::compareTo);
-//            indexX = indexOfX[indexX].index;
-//
-//            if (indexX != indexY) {
-//                throw new RuntimeException("index x not equal to index y");
-//            }
-//            this.points[indexX] = null;
-//            size--;
-//        }
-//    }
 
     public void setInstead(VPoint point) {
         points[position] = point;
@@ -156,28 +140,6 @@ class ScreenPointCollection {
         int first = point2.x - point1.x;
         int second = point2.y - point1.y;
         return (int) sqrt(pow(first, 2) + pow(second, 2));
-    }
-
-    /**
-     * @param srcPoint - point according that will calculate diapason
-     * @param distance - diapason above and below src
-     * @param dstPoint - point that is checked for being in the diapason
-     * @return true if the dst is in diapason, else - false
-     * <p>
-     * also see {@link ScreenPointCollection#isInHorizontalDiapason(VPoint, int, VPoint)}
-     * it has the same meaning
-     */
-    private boolean isInVerticalDiapason(VPoint srcPoint, int distance, VPoint dstPoint) {
-        return dstPoint.y >= srcPoint.y - distance
-                && dstPoint.y <= srcPoint.y + distance;
-    }
-
-    /**
-     * @see ScreenPointCollection#isInVerticalDiapason(VPoint, int, VPoint)
-     */
-    private boolean isInHorizontalDiapason(VPoint srcPoint, int distance, VPoint dstPoint) {
-        return dstPoint.x >= srcPoint.x - distance
-                && dstPoint.x <= srcPoint.x + distance;
     }
 
     class Node implements Comparable<Node> {

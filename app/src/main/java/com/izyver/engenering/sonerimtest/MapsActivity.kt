@@ -28,7 +28,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         mMap.setOnCameraChangeListener(this)
-        generateNewMarkers()
+        generateMarkers()
         val height = window.windowManager.defaultDisplay.height
         val width = window.windowManager.defaultDisplay.width
         val ukraine = LatLngBounds(LatLng(44.1, 22.1), LatLng(52.0, 40.5))
@@ -53,13 +53,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
             mMarkerDiameterPx
         )
         fab.setOnClickListener {
-            generateNewMarkers()
+            generateMarkers()
+            updateMarkers(mMap.cameraPosition.zoom)
         }
     }
 
-    private fun generateNewMarkers() {
+    private fun generateMarkers() {
         mMarkerProcessor.generate(LatLng(51.773911, 25.590464), LatLng(47.057204, 37.210914))
-        updateMarkers(mMap.cameraPosition.zoom)
     }
 
     private var markers: HashMap<LatLng, Marker> = hashMapOf()

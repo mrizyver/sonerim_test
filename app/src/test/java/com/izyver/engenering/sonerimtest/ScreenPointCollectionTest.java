@@ -74,6 +74,37 @@ public class ScreenPointCollectionTest {
     }
 
     @Test
+    public void moveBackTest() {
+        FakeVPoint[] points = new FakeVPoint[]{
+                new FakeVPoint(1, 5, 5),
+                new FakeVPoint(2, 10, 5),
+                new FakeVPoint(3, 5, 10),
+                new FakeVPoint(4, 10, 10),
+                new FakeVPoint(5, 30, 30)
+        };
+
+        FakeVPoint[] copy = new FakeVPoint[points.length];
+        System.arraycopy(points, 0, copy, 0, points.length);
+        ScreenPointCollection collection = new ScreenPointCollection(copy);
+
+        assertTrue(collection.hasNext());
+        VPoint next = collection.next();
+        assertEquals(points[0], next);
+        VPoint[] around = collection.getAround(next, 10, true);
+        assertTrue(contains(around, points[1]));
+        assertTrue(contains(around, points[2]));
+        assertTrue(contains(around, points[3]));
+        FakeVPoint splitPoint = splitPoints(next, around);
+        collection.setInstead(splitPoint);
+        collection.moveBack();
+        assertTrue(collection.hasNext());
+        next = collection.next();
+        assertEquals(splitPoint, next);
+
+
+    }
+
+    @Test
     public void fullTest() {
         ScreenPointCollection collection = new ScreenPointCollection(points);
         while (collection.hasNext()) {

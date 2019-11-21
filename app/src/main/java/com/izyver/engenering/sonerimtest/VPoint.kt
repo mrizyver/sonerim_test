@@ -13,4 +13,9 @@ open class VPoint(@JvmField var value: Int, x: Int = 0, y: Int = 0) : Point(x, y
         result = 31 * result + value
         return result
     }
+
+    override fun toString(): String {
+        return "VPoint(value=$value, x=$x, y=$y)"
+    }
+
 }

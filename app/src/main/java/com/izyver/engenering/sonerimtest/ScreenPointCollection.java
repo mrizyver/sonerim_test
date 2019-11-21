@@ -86,7 +86,8 @@ class ScreenPointCollection {
             position += mustToJump;
             mustToJump = NOT_MUST_TO_JUMP;
         } else {
-            position++;
+            if(points[++position] == null)
+                while (points[position] == null) position++;
         }
         return points[position];
     }

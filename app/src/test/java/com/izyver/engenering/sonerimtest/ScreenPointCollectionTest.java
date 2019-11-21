@@ -104,6 +104,18 @@ public class ScreenPointCollectionTest {
 
     }
 
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void nextTest(){
+        ScreenPointCollection collection = new ScreenPointCollection(points);
+
+        assertEquals(points[0], collection.next());
+        points[1] = points[2] = points[3] = null;
+        assertEquals(points[4], collection.next());
+        points[5] = points[6] = points[7] = points[8] = points[9] = points[10] = null;
+        assertEquals(points[11], collection.next());
+        collection.next();//must be index of bound
+    }
+
     @Test
     public void fullTest() {
         ScreenPointCollection collection = new ScreenPointCollection(points);
